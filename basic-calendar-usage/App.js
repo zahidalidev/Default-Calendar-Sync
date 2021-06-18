@@ -14,6 +14,7 @@ export default function App() {
   const [calendarIds, setCalendarIds] = useState([])
   const [allEvent, setAllEvent] = useState([])
   const [allCalendars, setAllCalendars] = useState([])
+  const [androidEvents, setAndroidEvents] = useState([])
 
 
   async function onRefresh() {
@@ -73,29 +74,22 @@ export default function App() {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
 
       if (Platform.OS === 'ios') {
-        // const { status: remStatus } = await Calendar.requestRemindersPermissionsAsync()
-        // const reminders = await Calendar.getCalendarsAsync(Calendar.EntityTypes.REMINDER);
-        // console.log(reminders)
-
         const res = await Calendar.getDefaultCalendarAsync()
         const tes = await Calendar.getEventsAsync([res.id], "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
-        console.log("All Events: ", tes)
+        console.log("All Events ios: ", tes)
+
       } else {
-        // const res = await Calendar.getDefaultCalendarAsync()
-
-      }
-      if (status === 'granted') {
-        let calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-        console.log('Here are all your calendars:');
-        let newIds = [];
-        for (let i = 0; i < 5; i++) {
-          newIds.push(calendars[i].id)
+        if (status === 'granted') {
+          let calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+          console.log('Here are all your calendars:');
+          let newIds = [];
+          for (let i = 0; i < calendars.length; i++) {
+            newIds.push(calendars[i].id)
+          }
+          const tes = await Calendar.getEventsAsync(newIds, "2020-07-18T21:07:29.000Z", "2023-06-27T21:07:29.000Z")
+          // console.log("All Events android: ", tes)
+          setAndroidEvents(tes)
         }
-
-        const tes = await Calendar.getEventsAsync(newIds, "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
-        console.log("h\ni\n \nz\nah\n----------------------------------------------=============***********************************id: ");
-        console.log("All Events: ", tes)
-        // setAllCalendars(calendars);
       }
     })();
 
@@ -276,20 +270,12 @@ export default function App() {
           <Text>All Events title</Text>
         </View>
         {
-          allEvent.map((item, index) =>
-            <View key={index} style={{ flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
-              <Text>{item.title}</Text>
+          androidEvents.map((item, index) =>
+            <View key={index} style={{ marginTop: 10, flexDirection: "row", flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
+              <Text style={{ color: "blue" }} >Title: {item.title + index} </Text>
+              <Text style={{ color: "red" }} >Date:  {item.startDate}</Text>
             </View>
 
-          )
-        }
-
-        {
-          allCalendars.map((item, index) =>
-
-            <View key={index} >
-              <Text>{JSON.stringify(item)}</Text>
-            </View>
           )
         }
       </ScrollView>
