@@ -4,6 +4,7 @@ import * as Calendar from 'expo-calendar';
 import * as Localization from 'expo-localization';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import moment from 'moment';
+import RNCalendarEvents from "react-native-calendar-events";
 
 export default function App() {
 
@@ -12,6 +13,7 @@ export default function App() {
   const [eventIds, setEventIds] = useState([])
   const [calendarIds, setCalendarIds] = useState([])
   const [allEvent, setAllEvent] = useState([])
+  const [allCalendars, setAllCalendars] = useState([])
 
 
   async function onRefresh() {
@@ -53,21 +55,47 @@ export default function App() {
       await AsyncStorage.removeItem('Events')
       await AsyncStorage.setItem('Events', JSON.stringify(allEventArray))
       setAllEvent(allEventArray)
-      console.log("hi: ", allEventArray)
+      // console.log("hi: ", allEventArray)
     } catch (error) {
 
     }
   }
 
   useEffect(() => {
+    let i = 0;
+    let interval = setInterval(async () => {
+      await getCalanderAndroid()
+      // console.log(i++);
+    }, 2000);
+
+
     (async () => {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
+
+      if (Platform.OS === 'ios') {
+        // const { status: remStatus } = await Calendar.requestRemindersPermissionsAsync()
+        // const reminders = await Calendar.getCalendarsAsync(Calendar.EntityTypes.REMINDER);
+        // console.log(reminders)
+
+        const res = await Calendar.getDefaultCalendarAsync()
+        const tes = await Calendar.getEventsAsync([res.id], "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
+        console.log("All Events: ", tes)
+      } else {
+        // const res = await Calendar.getDefaultCalendarAsync()
+        // const tes = await Calendar.getEventsAsync([res.id], "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
+        // console.log("All Events: ", tes)
+      }
       if (status === 'granted') {
-        const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-        console.log('Here are all your calendars:');
-        // console.log({ calendars });
+        // const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+        // console.log('Here are all your calendars:');
+        // console.log(calendars)
+        // setAllCalendars(calendars);
       }
     })();
+
+    return (() => {
+      clearInterval(interval)
+    })
   }, []);
 
 
@@ -163,7 +191,7 @@ export default function App() {
         }
         return item;
       });
-      console.log(allEvents)
+      // console.log(allEvents)
       await AsyncStorage.removeItem('Events')
       await AsyncStorage.setItem('Events', JSON.stringify(allEvents))
     }
@@ -206,7 +234,7 @@ export default function App() {
         .add(4, 'days')
         .toDate());
 
-    console.log(`All the events `);
+    console.log(`All the events getEvent `);
     console.log(events)
   }
   return (
@@ -247,6 +275,15 @@ export default function App() {
               <Text>{item.title}</Text>
             </View>
 
+          )
+        }
+
+        {
+          allCalendars.map((item, index) =>
+
+            <View key={index} >
+              <Text>{JSON.stringify(item)}</Text>
+            </View>
           )
         }
       </ScrollView>
