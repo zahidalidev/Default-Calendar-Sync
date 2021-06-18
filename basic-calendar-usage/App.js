@@ -82,13 +82,19 @@ export default function App() {
         console.log("All Events: ", tes)
       } else {
         // const res = await Calendar.getDefaultCalendarAsync()
-        // const tes = await Calendar.getEventsAsync([res.id], "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
-        // console.log("All Events: ", tes)
+
       }
       if (status === 'granted') {
-        // const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-        // console.log('Here are all your calendars:');
-        // console.log(calendars)
+        let calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+        console.log('Here are all your calendars:');
+        let newIds = [];
+        for (let i = 0; i < 5; i++) {
+          newIds.push(calendars[i].id)
+        }
+
+        const tes = await Calendar.getEventsAsync(newIds, "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
+        console.log("h\ni\n \nz\nah\n----------------------------------------------=============***********************************id: ");
+        console.log("All Events: ", tes)
         // setAllCalendars(calendars);
       }
     })();
