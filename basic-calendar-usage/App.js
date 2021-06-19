@@ -15,6 +15,7 @@ export default function App() {
   const [allEvent, setAllEvent] = useState([])
   const [allCalendars, setAllCalendars] = useState([])
   const [androidEvents, setAndroidEvents] = useState([])
+  const [iosEvents, setIosEvents] = useState([])
 
 
   async function onRefresh() {
@@ -74,9 +75,24 @@ export default function App() {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
 
       if (Platform.OS === 'ios') {
-        const res = await Calendar.getDefaultCalendarAsync()
-        const tes = await Calendar.getEventsAsync([res.id], "2021-07-18T21:07:29.000Z", "2022-06-18T21:07:29.000Z")
-        console.log("All Events ios: ", tes)
+        // const res = await Calendar.getDefaultCalendarAsync()
+        const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.REMINDER)
+        let newIds = [];
+        for (let i = 0; i < calendars.length; i++) {
+          newIds.push(calendars[i].id)
+        }
+        const tes = await Calendar.getEventsAsync(newIds, "2020-11-18T21:07:29.000Z", "2023-06-18T21:07:29.000Z")
+
+        for (let i = 0; i < tes.length; i++) {
+          if (tes[i].calendarId == calendarIds[0]) {
+            console.log(tes[i])
+          } else {
+            console.log(tes[i].title)
+          }
+        }
+        console.log("All Events calendarIds: ", calendarIds)
+
+        setIosEvents(tes)
 
       } else {
         if (status === 'granted') {
@@ -87,6 +103,7 @@ export default function App() {
             newIds.push(calendars[i].id)
           }
           const tes = await Calendar.getEventsAsync(newIds, "2020-07-18T21:07:29.000Z", "2023-06-27T21:07:29.000Z")
+          console.log("All Events calendarIds: ", calendarIds)
           // console.log("All Events android: ", tes)
           setAndroidEvents(tes)
         }
@@ -110,6 +127,7 @@ export default function App() {
       Platform.OS === 'IOS'
         ? await getDefaultCalendarSource()
         : { isLocalAccount: true, name: 'Expo Calendar' };
+
     const newCalendarID = await Calendar.createCalendarAsync({
       title: 'Sunny raj joy Calendar',
       color: 'blue',
@@ -128,7 +146,7 @@ export default function App() {
     const eventId = await Calendar.createEventAsync(
       newCalendarID,
       {
-        title: " a new task",
+        title: " a new task...............................................................................",
         notes: "a new task notes",
         startDate: moment(moment().format())
           .add(1, 'm')
@@ -265,15 +283,23 @@ export default function App() {
             onRefresh={() => onRefresh()}
           />
         }
-        style={{ marginTop: 50, width: "100%", flex: 1 }} >
+        style={{ marginTop: 50, width: "100%", flex: 1, marginBottom: 20 }} >
         <View style={{ flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
           <Text>All Events title</Text>
         </View>
-        {
+        {Platform.OS === "android" ?
           androidEvents.map((item, index) =>
-            <View key={index} style={{ marginTop: 10, flexDirection: "row", flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
-              <Text style={{ color: "blue" }} >Title: {item.title + index} </Text>
-              <Text style={{ color: "red" }} >Date:  {item.startDate}</Text>
+            <View key={index} style={{ marginBottom: 10, flexDirection: "row", flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
+              <Text style={{ color: calendarIds[0] == item.calendarId ? "green" : "blue" }} >Title: {item.title + index} </Text>
+              <Text style={{ color: calendarIds[0] == item.calendarId ? "green" : "red" }} >Date:  {item.calendarId}</Text>
+            </View>
+
+          )
+          :
+          iosEvents.map((item, index) =>
+            <View key={index} style={{ marginBottom: 10, flexDirection: "row", flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
+              <Text style={{ color: calendarIds[0] == item.calendarId ? "green" : "blue" }} >Title: {item.title + index} </Text>
+              <Text style={{ color: calendarIds[0] == item.calendarId ? "green" : "red" }} ></Text>
             </View>
 
           )
