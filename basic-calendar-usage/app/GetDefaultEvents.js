@@ -9,9 +9,17 @@ const GetDefaultEvents = async () => {
 
     if (Platform.OS === 'ios') {
         // const res = await Calendar.getDefaultCalendarAsync()
-        const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.REMINDER)
-        for (let i = 0; i < calendars.length; i++) {
-            newIds.push(calendars[i].id)
+        let reminderStatus = await Calendar.requestRemindersPermissionsAsync()
+
+        if (reminderStatus.status == "granted") {
+            const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.REMINDER)
+            for (let i = 0; i < calendars.length; i++) {
+                newIds.push(calendars[i].id)
+            }
+
+            const allEvents = await Calendar.getEventsAsync(newIds, "2020-11-18T21:07:29.000Z", "2023-06-18T21:07:29.000Z")
+            console.log("allEvents: ", allEvents)
+            return allEvents
         }
 
     } else {
@@ -20,11 +28,13 @@ const GetDefaultEvents = async () => {
             for (let i = 0; i < calendars.length; i++) {
                 newIds.push(calendars[i].id)
             }
+
+            const allEvents = await Calendar.getEventsAsync(newIds, "2020-11-18T21:07:29.000Z", "2023-06-18T21:07:29.000Z")
+            console.log("allEvents: ", allEvents)
+            return allEvents
         }
     }
 
-    const allEvents = await Calendar.getEventsAsync(newIds, "2020-11-18T21:07:29.000Z", "2023-06-18T21:07:29.000Z")
-    return allEvents
 }
 
 export default GetDefaultEvents;

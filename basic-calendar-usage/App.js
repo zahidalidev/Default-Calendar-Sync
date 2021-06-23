@@ -76,6 +76,15 @@ export default function App() {
 
     }, 2000);
 
+    (async () => {
+      if (Platform.OS === "ios") {
+
+      } else {
+        await _askForCalendarPermissions();
+        await _askForReminderPermissions();
+      }
+    })();
+
     return (() => {
       clearInterval(interval)
     })
@@ -114,7 +123,7 @@ export default function App() {
         </View>
         <View style={{ flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} >
           {allEvent.map((item, index) =>
-            <Text>{item.title}</Text>
+            <Text key={index} >{item.title}</Text>
           )}
         </View>
         {
