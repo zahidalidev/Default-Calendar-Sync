@@ -136,6 +136,8 @@ function CreateEvent(props) {
         },
     })
 
+    const [taskText, setTaskText] = useState('')
+    const [notesText, setNotesText] = useState('')
     const [currentDay, setCurrentDay] = useState(moment().format())
     const [alarmTime, setAlarmTime] = useState(moment().format())
     const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false)
@@ -227,8 +229,8 @@ function CreateEvent(props) {
                         <View style={styles.taskContainer}>
                             <TextInput
                                 style={styles.title}
-                                // onChangeText={text => this.setState({ taskText: text })}
-                                // value={taskText}
+                                onChangeText={text => setTaskText(text)}
+                                value={taskText}
                                 placeholder="What do you need to do?"
                             />
                             <Text
@@ -266,10 +268,8 @@ function CreateEvent(props) {
                                         fontSize: 19,
                                         marginTop: 3,
                                     }}
-                                    onChangeText={text => null
-                                        // this.setState({ notesText: text })
-                                    }
-                                    // value={notesText}
+                                    onChangeText={text => setNotesText(text)}
+                                    value={notesText}
                                     placeholder="Enter notes about the task."
                                 />
                             </View>
@@ -301,14 +301,14 @@ function CreateEvent(props) {
 
                         </View>
                         <TouchableOpacity
-                            // disabled={taskText === ''}
+                            disabled={taskText === ''}
                             style={[
                                 styles.createTaskButton,
                                 {
                                     backgroundColor:
-                                        // taskText === ''
-                                        // ? 'rgba(46, 102, 231,0.5)'
-                                        '#2E66E7',
+                                        taskText === ''
+                                            ? 'rgba(46, 102, 231,0.5)' :
+                                            '#2E66E7',
                                 },
                             ]}
                             onPress={async () => {
