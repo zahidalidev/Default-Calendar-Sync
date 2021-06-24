@@ -61,16 +61,8 @@ function CreateEvent(props) {
             />
 
             <View style={styles.container}>
-                <View
-                    style={{
-                        height: Dimensions.get('window').height,
-                    }}
-                >
-                    <ScrollView
-                        contentContainerStyle={{
-                            paddingBottom: 100,
-                        }}
-                    >
+                <View style={{ height: Dimensions.get('window').height }}>
+                    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                         <View style={styles.backButton}>
                             <TouchableOpacity
                                 onPress={() => alert("Home screen is not prepared yet")}
@@ -79,15 +71,10 @@ function CreateEvent(props) {
                                 <MaterialCommunityIcons name="chevron-left" size={30} />
                             </TouchableOpacity>
 
-                            <Text style={styles.newTask}>New Task</Text>
+                            <Text style={styles.newTask}>New Event</Text>
                         </View>
                         <View style={styles.calenderContainer}>
-                            <CalendarList
-                                style={{
-                                    width: 350,
-                                    height: 350,
-                                }}
-
+                            <CalendarList style={{ width: 350, height: 350 }}
                                 current={currentDay}
                                 minDate={moment().format()}
                                 horizontal
@@ -95,7 +82,6 @@ function CreateEvent(props) {
                                 pagingEnabled
                                 calendarWidth={350}
                                 onDayPress={day => {
-                                    console.log("selected day: ", day)
                                     setSelectedDay({
                                         [day.dateString]: {
                                             selected: true,
@@ -108,7 +94,6 @@ function CreateEvent(props) {
                                 monthFormat="yyyy MMMM"
                                 hideArrows
                                 // markingType="period"
-
                                 theme={{
                                     selectedDayBackgroundColor: '#40aa95',
                                     selectedDayTextColor: '#ffffff',
@@ -134,15 +119,10 @@ function CreateEvent(props) {
                             <View style={styles.notesContent} />
                             <View>
                                 <Text style={styles.notes}>Description</Text>
-                                <TextInput
-                                    style={{
-                                        height: 25,
-                                        fontSize: 19,
-                                        marginTop: 3,
-                                    }}
+                                <TextInput style={{ height: 25, fontSize: 19, marginTop: 3 }}
                                     onChangeText={text => setNotesText(text)}
                                     value={notesText}
-                                    placeholder="Enter notes about the task."
+                                    placeholder="Description of the event."
                                 />
                             </View>
 
@@ -151,12 +131,7 @@ function CreateEvent(props) {
                             {/* Add Peaople */}
                             <View>
                                 <Text style={styles.notes}>People</Text>
-                                <TextInput
-                                    style={{
-                                        height: 25,
-                                        fontSize: 19,
-                                        marginTop: 3,
-                                    }}
+                                <TextInput style={{ height: 25, fontSize: 19, marginTop: 3, }}
                                     onChangeText={text => setNotesText(text)}
                                     value={notesText}
                                     placeholder="Add People"
@@ -168,66 +143,36 @@ function CreateEvent(props) {
                             {/* Add Location */}
                             <View>
                                 <Text style={styles.notes}>Location</Text>
-                                <TextInput
-                                    style={{
-                                        height: 25,
-                                        fontSize: 19,
-                                        marginTop: 3,
-                                    }}
+                                <TextInput style={{ height: 25, fontSize: 19, marginTop: 3 }}
                                     onChangeText={text => setNotesText(text)}
                                     value={notesText}
                                     placeholder="Add Location"
                                 />
                             </View>
 
-                            {/* time */}
+                            {/* add time */}
                             <View style={styles.seperator} />
                             <View>
-                                <Text
-                                    style={{
-                                        color: '#9CAAC4',
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                    }}
-                                >
+                                <Text style={{ color: '#9CAAC4', fontSize: 16, fontWeight: '600' }}>
                                     Times
                                 </Text>
                                 <TouchableOpacity
-                                    onPress={() => setIsDateTimePickerVisible(true)}
-                                    style={{
-                                        height: 25,
-                                        marginTop: 3,
-                                    }}
-                                >
+                                    onPress={() => setIsDateTimePickerVisible(true)} style={{ height: 25, marginTop: 3 }}>
                                     <Text style={{ fontSize: 19 }}>
                                         {moment(alarmTime).format('h:mm A')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-
-
                         </View>
+
+                        {/* Add Event button */}
                         <TouchableOpacity
                             disabled={taskText === ''}
-                            style={[
-                                styles.createTaskButton,
-                                {
-                                    backgroundColor:
-                                        taskText === ''
-                                            ? 'rgba(46, 102, 231,0.5)' :
-                                            '#2E66E7',
-                                },
-                            ]}
+                            style={[styles.createTaskButton, { backgroundColor: taskText === '' ? 'rgba(46, 102, 231,0.5)' : '#2E66E7' }]}
                             onPress={() => addEventsToCalendar()}
                         >
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    textAlign: 'center',
-                                    color: '#fff',
-                                }}
-                            >
-                                ADD YOUR TASK
+                            <Text style={{ fontSize: 18, textAlign: 'center', color: '#fff' }}>
+                                ADD YOUR EVENT
                             </Text>
                         </TouchableOpacity>
                     </ScrollView>
