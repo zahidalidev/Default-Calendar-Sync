@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import CreateNewEvent from "../components/CreateEvent"
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const { width: vw } = Dimensions.get('window');
 
@@ -86,6 +87,7 @@ function CreateEvent(props) {
                                     width: 350,
                                     height: 350,
                                 }}
+
                                 current={currentDay}
                                 minDate={moment().format()}
                                 horizontal
@@ -105,9 +107,10 @@ function CreateEvent(props) {
                                 }}
                                 monthFormat="yyyy MMMM"
                                 hideArrows
-                                markingType="period"
+                                // markingType="period"
+
                                 theme={{
-                                    selectedDayBackgroundColor: '#2E66E7',
+                                    selectedDayBackgroundColor: '#40aa95',
                                     selectedDayTextColor: '#ffffff',
                                     todayTextColor: '#2E66E7',
                                     backgroundColor: '#eaeef7',
@@ -120,41 +123,17 @@ function CreateEvent(props) {
 
                         {/* Task Container */}
                         <View style={styles.taskContainer}>
+                            {/* add title */}
                             <TextInput
                                 style={styles.title}
                                 onChangeText={text => setTaskText(text)}
                                 value={taskText}
                                 placeholder="What do you need to do?"
                             />
-                            <Text
-                                style={{
-                                    fontSize: 14,
-                                    color: '#BDC6D8',
-                                    marginVertical: 10,
-                                }}
-                            >
-                                Suggestion
-                            </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={styles.readBook}>
-                                    <Text style={{ textAlign: 'center', fontSize: 14 }}>
-                                        Read book
-                                    </Text>
-                                </View>
-                                <View style={styles.design}>
-                                    <Text style={{ textAlign: 'center', fontSize: 14 }}>
-                                        Design
-                                    </Text>
-                                </View>
-                                <View style={styles.learn}>
-                                    <Text style={{ textAlign: 'center', fontSize: 14 }}>
-                                        Learn
-                                    </Text>
-                                </View>
-                            </View>
+
                             <View style={styles.notesContent} />
                             <View>
-                                <Text style={styles.notes}>Notes</Text>
+                                <Text style={styles.notes}>Description</Text>
                                 <TextInput
                                     style={{
                                         height: 25,
@@ -166,6 +145,42 @@ function CreateEvent(props) {
                                     placeholder="Enter notes about the task."
                                 />
                             </View>
+
+                            <View style={styles.seperator} />
+
+                            {/* Add Peaople */}
+                            <View>
+                                <Text style={styles.notes}>People</Text>
+                                <TextInput
+                                    style={{
+                                        height: 25,
+                                        fontSize: 19,
+                                        marginTop: 3,
+                                    }}
+                                    onChangeText={text => setNotesText(text)}
+                                    value={notesText}
+                                    placeholder="Add People"
+                                />
+                            </View>
+
+                            <View style={styles.seperator} />
+
+                            {/* Add Location */}
+                            <View>
+                                <Text style={styles.notes}>Location</Text>
+                                <TextInput
+                                    style={{
+                                        height: 25,
+                                        fontSize: 19,
+                                        marginTop: 3,
+                                    }}
+                                    onChangeText={text => setNotesText(text)}
+                                    value={notesText}
+                                    placeholder="Add Location"
+                                />
+                            </View>
+
+                            {/* time */}
                             <View style={styles.seperator} />
                             <View>
                                 <Text
@@ -190,7 +205,6 @@ function CreateEvent(props) {
                                 </TouchableOpacity>
                             </View>
 
-                            <View style={styles.seperator} />
 
                         </View>
                         <TouchableOpacity
@@ -282,7 +296,7 @@ const styles = StyleSheet.create({
         fontSize: 19,
     },
     taskContainer: {
-        height: 400,
+        height: 410,
         width: 327,
         alignSelf: 'center',
         borderRadius: 20,
@@ -298,7 +312,7 @@ const styles = StyleSheet.create({
         padding: 22,
     },
     calenderContainer: {
-        marginTop: 30,
+        marginTop: RFPercentage(1),
         width: 350,
         height: 350,
         alignSelf: 'center',
@@ -312,7 +326,7 @@ const styles = StyleSheet.create({
     },
     backButton: {
         flexDirection: 'row',
-        marginTop: 60,
+        marginTop: RFPercentage(3),
         width: '100%',
         alignItems: 'center',
     },
