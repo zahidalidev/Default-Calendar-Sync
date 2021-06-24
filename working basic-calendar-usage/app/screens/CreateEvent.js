@@ -1,129 +1,13 @@
-import React, { Component, useState } from 'react';
-import {
-    Text,
-    Image,
-    View,
-    TouchableOpacity,
-    Dimensions,
-    ScrollView,
-    TextInput,
-    Keyboard,
-    Switch,
-    StyleSheet,
-    Alert,
-} from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, TouchableOpacity, Dimensions, ScrollView, TextInput, StyleSheet } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
-import * as Calendar from 'expo-calendar';
-import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import uuid from 'uuid';
 import { MaterialCommunityIcons } from "@expo/vector-icons"
-
-const Context = React.createContext();
+import CreateNewEvent from "../components/CreateEvent"
 
 const { width: vw } = Dimensions.get('window');
-
-const styles = StyleSheet.create({
-    createTaskButton: {
-        width: 252,
-        height: 48,
-        alignSelf: 'center',
-        marginTop: 40,
-        borderRadius: 5,
-        justifyContent: 'center',
-    },
-    seperator: {
-        height: 0.5,
-        width: '100%',
-        backgroundColor: '#979797',
-        alignSelf: 'center',
-        marginVertical: 20,
-    },
-    notes: {
-        color: '#9CAAC4',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    notesContent: {
-        height: 0.5,
-        width: '100%',
-        backgroundColor: '#979797',
-        alignSelf: 'center',
-        marginVertical: 20,
-    },
-    learn: {
-        height: 23,
-        width: 51,
-        backgroundColor: '#F8D557',
-        justifyContent: 'center',
-        borderRadius: 5,
-    },
-    design: {
-        height: 23,
-        width: 59,
-        backgroundColor: '#62CCFB',
-        justifyContent: 'center',
-        borderRadius: 5,
-        marginRight: 7,
-    },
-    readBook: {
-        height: 23,
-        width: 83,
-        backgroundColor: '#4CD565',
-        justifyContent: 'center',
-        borderRadius: 5,
-        marginRight: 7,
-    },
-    title: {
-        height: 25,
-        borderColor: '#5DD976',
-        borderLeftWidth: 1,
-        paddingLeft: 8,
-        fontSize: 19,
-    },
-    taskContainer: {
-        height: 400,
-        width: 327,
-        alignSelf: 'center',
-        borderRadius: 20,
-        shadowColor: '#2E66E7',
-        backgroundColor: '#ffffff',
-        shadowOffset: {
-            width: 3,
-            height: 3,
-        },
-        shadowRadius: 20,
-        shadowOpacity: 0.2,
-        elevation: 5,
-        padding: 22,
-    },
-    calenderContainer: {
-        marginTop: 30,
-        width: 350,
-        height: 350,
-        alignSelf: 'center',
-    },
-    newTask: {
-        alignSelf: 'center',
-        fontSize: 20,
-        width: 120,
-        height: 25,
-        textAlign: 'center',
-    },
-    backButton: {
-        flexDirection: 'row',
-        marginTop: 60,
-        width: '100%',
-        alignItems: 'center',
-    },
-    container: {
-        flex: 1,
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: '#eaeef7',
-    },
-});
 
 function CreateEvent(props) {
 
@@ -157,6 +41,15 @@ function CreateEvent(props) {
         setIsDateTimePickerVisible(false);
     };
 
+
+    const addEventsToCalendar = async calendarId => {
+        try {
+            await CreateNewEvent(taskText, notesText, alarmTime)
+        } catch (error) {
+            console.log("Create Event Error: ", error);
+        }
+    };
+
     return (
         <>
             <DateTimePicker
@@ -179,7 +72,7 @@ function CreateEvent(props) {
                     >
                         <View style={styles.backButton}>
                             <TouchableOpacity
-                                // onPress={() => this.props.navigation.navigate('Home')}
+                                onPress={() => alert("Home screen is not prepared yet")}
                                 style={{ marginRight: vw / 2 - 120, marginLeft: 20 }}
                             >
                                 <MaterialCommunityIcons name="chevron-left" size={30} />
@@ -311,8 +204,7 @@ function CreateEvent(props) {
                                             '#2E66E7',
                                 },
                             ]}
-                            onPress={async () => {
-                            }}
+                            onPress={() => addEventsToCalendar()}
                         >
                             <Text
                                 style={{
@@ -331,6 +223,105 @@ function CreateEvent(props) {
     );
 }
 
+const styles = StyleSheet.create({
+    createTaskButton: {
+        width: 252,
+        height: 48,
+        alignSelf: 'center',
+        marginTop: 40,
+        borderRadius: 5,
+        justifyContent: 'center',
+    },
+    seperator: {
+        height: 0.5,
+        width: '100%',
+        backgroundColor: '#979797',
+        alignSelf: 'center',
+        marginVertical: 20,
+    },
+    notes: {
+        color: '#9CAAC4',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    notesContent: {
+        height: 0.5,
+        width: '100%',
+        backgroundColor: '#979797',
+        alignSelf: 'center',
+        marginVertical: 20,
+    },
+    learn: {
+        height: 23,
+        width: 51,
+        backgroundColor: '#F8D557',
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    design: {
+        height: 23,
+        width: 59,
+        backgroundColor: '#62CCFB',
+        justifyContent: 'center',
+        borderRadius: 5,
+        marginRight: 7,
+    },
+    readBook: {
+        height: 23,
+        width: 83,
+        backgroundColor: '#4CD565',
+        justifyContent: 'center',
+        borderRadius: 5,
+        marginRight: 7,
+    },
+    title: {
+        height: 25,
+        borderColor: '#5DD976',
+        borderLeftWidth: 1,
+        paddingLeft: 8,
+        fontSize: 19,
+    },
+    taskContainer: {
+        height: 400,
+        width: 327,
+        alignSelf: 'center',
+        borderRadius: 20,
+        shadowColor: '#2E66E7',
+        backgroundColor: '#ffffff',
+        shadowOffset: {
+            width: 3,
+            height: 3,
+        },
+        shadowRadius: 20,
+        shadowOpacity: 0.2,
+        elevation: 5,
+        padding: 22,
+    },
+    calenderContainer: {
+        marginTop: 30,
+        width: 350,
+        height: 350,
+        alignSelf: 'center',
+    },
+    newTask: {
+        alignSelf: 'center',
+        fontSize: 20,
+        width: 120,
+        height: 25,
+        textAlign: 'center',
+    },
+    backButton: {
+        flexDirection: 'row',
+        marginTop: 60,
+        width: '100%',
+        alignItems: 'center',
+    },
+    container: {
+        flex: 1,
+        paddingTop: Constants.statusBarHeight,
+        backgroundColor: '#eaeef7',
+    },
+});
 
 
 export default CreateEvent;

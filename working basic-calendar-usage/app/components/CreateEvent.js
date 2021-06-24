@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import CreateCalendar from "./CreateCalendar"
 
-async function CreateEvent(title, notes) {
+async function CreateEvent(title, notes, alarmTime) {
 
   let calanderId = await AsyncStorage.getItem("calendarId");
   calanderId = JSON.parse(calanderId);
@@ -19,16 +19,16 @@ async function CreateEvent(title, notes) {
     {
       title,
       notes,
-      startDate: moment(moment().format())
+      startDate: moment(alarmTime)
         .add(1, 'm')
         .toDate(),
-      endDate: moment(moment().format())
+      endDate: moment(alarmTime)
         .add(5, 'm')
         .toDate(),
       timeZone: Localization.timezone,
     });
 
-  alert(`New event iD: ${eventId}`);
+  alert(`New Event is Created`);
 
   const newEvent = await Calendar.getEventAsync(eventId)
 

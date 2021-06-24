@@ -4,12 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import CreateEventTask from "./app/screens/CreateEvent"
 
-import CreateEvent from './app/CreateEvent';
-import GetCustomEvents from './app/GetCustomEvents';
-import DeleteEvent from './app/DeleteEvent';
-import UpdateEvent from './app/UpdateEvent';
-import GetDefaultEvents from './app/GetDefaultEvents';
-import CreateCalendar from './app/CreateCalendar';
+import CreateEvent from './app/components/CreateEvent';
+import GetCustomEvents from './app/components/GetCustomEvents';
+import DeleteEvent from './app/components/DeleteEvent';
+import UpdateEvent from './app/components/UpdateEvent';
+import GetDefaultEvents from './app/components/GetDefaultEvents';
+import CreateCalendar from './app/components/CreateCalendar';
 
 LogBox.ignoreAllLogs()
 
