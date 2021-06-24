@@ -113,7 +113,7 @@ function CreateEvent(props) {
                                 style={styles.title}
                                 onChangeText={text => setTaskText(text)}
                                 value={taskText}
-                                placeholder="What do you need to do?"
+                                placeholder="Event Name"
                             />
 
                             <View style={styles.notesContent} />
@@ -264,7 +264,9 @@ const styles = StyleSheet.create({
     },
     newTask: {
         alignSelf: 'center',
-        fontSize: 20,
+        // fontWeight: "bold",
+        fontSize: 22,
+        fontFamily: "sans-serif-medium",
         width: 120,
         height: 25,
         textAlign: 'center',
