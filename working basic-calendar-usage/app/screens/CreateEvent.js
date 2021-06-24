@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
     Text,
     Image,
@@ -19,6 +19,7 @@ import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import uuid from 'uuid';
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 const Context = React.createContext();
 
@@ -125,20 +126,48 @@ const styles = StyleSheet.create({
 });
 
 function CreateEvent(props) {
+
+    const [selectedDay, setSelectedDay] = useState({
+        [`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format(
+            'DD'
+        )}`]: {
+            selected: true,
+            selectedColor: '#2E66E7',
+        },
+    })
+
+    const [currentDay, setCurrentDay] = useState(moment().format())
+    const [alarmTime, setAlarmTime] = useState(moment().format())
+    const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false)
+
+
+    const handleDatePicked = date => {
+        const selectedDatePicked = currentDay;
+        const hour = moment(date).hour();
+        const minute = moment(date).minute();
+        const newModifiedDay = moment(selectedDatePicked)
+            .hour(hour)
+            .minute(minute);
+
+        console.log("newModifiedDay: ", newModifiedDay)
+        setAlarmTime(newModifiedDay)
+
+        setIsDateTimePickerVisible(false);
+    };
+
     return (
-        // <Context.Consumer>
         <>
             <DateTimePicker
-                isVisible={true}
-                //   onConfirm={this._handleDatePicked}
-                //   onCancel={this._hideDateTimePicker}
+                isVisible={isDateTimePickerVisible}
+                onConfirm={(date) => handleDatePicked(date)}
+                onCancel={() => setIsDateTimePickerVisible(false)}
                 mode="time"
             />
 
             <View style={styles.container}>
                 <View
                     style={{
-                        // height: visibleHeight,
+                        height: Dimensions.get('window').height,
                     }}
                 >
                     <ScrollView
@@ -151,11 +180,7 @@ function CreateEvent(props) {
                                 // onPress={() => this.props.navigation.navigate('Home')}
                                 style={{ marginRight: vw / 2 - 120, marginLeft: 20 }}
                             >
-                                {/* <Image
-                                    style={{ height: 25, width: 40 }}
-                                    source={require('../assets/back.png')}
-                                    resizeMode="contain"
-                                /> */}
+                                <MaterialCommunityIcons name="chevron-left" size={30} />
                             </TouchableOpacity>
 
                             <Text style={styles.newTask}>New Task</Text>
@@ -166,23 +191,22 @@ function CreateEvent(props) {
                                     width: 350,
                                     height: 350,
                                 }}
-                                // current={currentDay}
+                                current={currentDay}
                                 minDate={moment().format()}
                                 horizontal
                                 pastScrollRange={0}
                                 pagingEnabled
                                 calendarWidth={350}
                                 onDayPress={day => {
-                                    // this.setState({
-                                    //     selectedDay: {
-                                    //         [day.dateString]: {
-                                    //             selected: true,
-                                    //             selectedColor: '#2E66E7',
-                                    //         },
-                                    //     },
-                                    //     currentDay: day.dateString,
-                                    //     alarmTime: day.dateString,
-                                    // });
+                                    console.log("selected day: ", day)
+                                    setSelectedDay({
+                                        [day.dateString]: {
+                                            selected: true,
+                                            selectedColor: '#2E66E7',
+                                        },
+                                    })
+                                    setCurrentDay(day.dateString)
+                                    setAlarmTime(day.dateString)
                                 }}
                                 monthFormat="yyyy MMMM"
                                 hideArrows
@@ -195,9 +219,11 @@ function CreateEvent(props) {
                                     calendarBackground: '#eaeef7',
                                     textDisabledColor: '#d9dbe0',
                                 }}
-                            // markedDates={selectedDay}
+                                markedDates={selectedDay}
                             />
                         </View>
+
+                        {/* Task Container */}
                         <View style={styles.taskContainer}>
                             <TextInput
                                 style={styles.title}
@@ -259,14 +285,14 @@ function CreateEvent(props) {
                                     Times
                                 </Text>
                                 <TouchableOpacity
-                                    onPress={() => this._showDateTimePicker()}
+                                    onPress={() => setIsDateTimePickerVisible(true)}
                                     style={{
                                         height: 25,
                                         marginTop: 3,
                                     }}
                                 >
                                     <Text style={{ fontSize: 19 }}>
-                                        {/* {moment(alarmTime).format('h:mm A')} */}
+                                        {moment(alarmTime).format('h:mm A')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -302,7 +328,6 @@ function CreateEvent(props) {
                 </View>
             </View>
         </>
-        // </Context.Consumer>
     );
 }
 
