@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Text, View, TouchableOpacity, Dimensions, ScrollView, TextInput, StyleSheet } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
 import Constants from 'expo-constants';
-import DateTimePicker from 'react-native-modal-datetime-picker';
 import { MaterialCommunityIcons } from "@expo/vector-icons"
-import CreateNewEvent from "../components/CreateEvent"
 import { RFPercentage } from 'react-native-responsive-fontsize';
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
+import EventCard from "../components/cards/EventCard"
+import CreateCalendar from '../components/CreateCalendar';
+import GetCustomEvents from '../components/GetCustomEvents';
+import GetDefaultEvents from '../components/GetDefaultEvents';
 
 function HomeScreen(props) {
 
@@ -22,6 +25,63 @@ function HomeScreen(props) {
 
     const [currentDay, setCurrentDay] = useState(`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`)
     const [modalVisible, setModalVisible] = useState(false)
+    const [calendarId, setCalendarId] = useState('')
+    const [allCustomEvent, setAllCustomEvent] = useState([])
+    const [allDefaultEvents, setAllDefaultEvents] = useState([])
+
+    useEffect(() => {
+        getCalendarId()
+
+        //updating events every two seconds
+        let interval = setInterval(async () => {
+            // const allCustomEventsTemp = await GetCustomEvents()
+            let allDefaultEventsTemp = await GetDefaultEvents();
+
+            // if (allCustomEventsTemp !== undefined) {
+            //     setAllCustomEvent(allCustomEventsTemp)
+            //     console.log("allCustomEventsTemp: ", allCustomEventsTemp)
+            // }
+
+            if (allDefaultEventsTemp != undefined) {
+                for (let i = 0; i < 3; i++) {
+                    let stDate = allDefaultEventsTemp[i].startDate
+                    let endDate = allDefaultEventsTemp[i].endDate
+                    allDefaultEventsTemp[i].startDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
+                    allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`
+                }
+                setAllDefaultEvents(allDefaultEventsTemp)
+            }
+
+        }, 5000);
+
+        return (() => {
+            clearInterval(interval)
+        })
+    }, []);
+
+    const getCalendarId = async () => {
+        // if calander id is not set then get from async storage
+
+        if (!calendarId) {
+            let calenId = await AsyncStorage.getItem("calendarId")
+            calenId = JSON.parse(calenId);
+            if (!calenId) {
+                calenId = await CreateCalendar()
+            }
+            setCalendarId(calenId)
+        }
+    }
+
+    const handleEvents = async (day) => {
+        setSelectedDay({ [day.dateString]: { selected: true, selectedColor: '#2E66E7' } })
+        setModalVisible(false)
+        setCurrentDay(day.dateString)
+
+
+
+    }
+
+
 
 
     return (
@@ -42,16 +102,7 @@ function HomeScreen(props) {
                             pastScrollRange={0}
                             pagingEnabled
                             calendarWidth={350}
-                            onDayPress={day => {
-                                setSelectedDay({
-                                    [day.dateString]: {
-                                        selected: true,
-                                        selectedColor: '#2E66E7',
-                                    },
-                                })
-                                setModalVisible(false)
-                                setCurrentDay(day.dateString)
-                            }}
+                            onDayPress={day => handleEvents(day)}
                             monthFormat="yyyy MMMM"
                             hideArrows
                             // markingType="period"
@@ -76,6 +127,16 @@ function HomeScreen(props) {
                     </View>
                 </Modal>
             </View>
+
+            {/* event containers */}
+
+            <ScrollView
+                contentContainerStyle={{
+                    paddingBottom: 20,
+                }}
+            >
+                <EventCard />
+            </ScrollView>
         </View>
     );
 }
@@ -96,6 +157,7 @@ const styles = StyleSheet.create({
         height: 350,
         alignSelf: 'center',
     },
+
 });
 
 export default HomeScreen;

@@ -28,8 +28,7 @@ async function GetCustomEvents() {
             newIds.push(allEventArray[i].id)
         }
 
-        // console.log("allEventArray: ", newIds)
-
+        console.log("allEventArray: ", newIds)
 
         await AsyncStorage.removeItem('Events')
         await AsyncStorage.setItem('Events', JSON.stringify(allEventArray))
