@@ -1,13 +1,17 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import moment from 'moment';
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 
-function EventCard({ title, startDate, desciption, onSubmit }) {
+// config
+import Colors from '../../config/Colors';
+import { RFPercentage } from 'react-native-responsive-fontsize';
+
+function EventCard({ title, startDate, desciption, onSubmit, edit }) {
     return (
-        <TouchableOpacity onPress={() => onSubmit()} style={styles.taskListContent}>
+        <TouchableOpacity activeOpacity={0.8} onPress={() => onSubmit()} style={styles.taskListContent}>
             <View style={{ marginLeft: 13, }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ height: 12, width: 12, borderRadius: 6, backgroundColor: "red", marginRight: 8, }} />
+                    <View style={{ height: 12, width: 12, borderRadius: 6, backgroundColor: Colors.green, marginRight: 8, }} />
                     <Text numberOfLines={1} style={{ width: "80%", color: '#554A4C', fontSize: 20, fontWeight: '700', }}>
                         {title}
                     </Text>
@@ -23,11 +27,16 @@ function EventCard({ title, startDate, desciption, onSubmit }) {
                     </View>
                 </View>
             </View>
+            {
+                edit ? <View style={{ position: "absolute", top: RFPercentage(1), right: RFPercentage(2) }} >
+                    <MaterialCommunityIcons name="square-edit-outline" color={Colors.green} size={RFPercentage(3.7)} />
+                </View> : null
+            }
             <View
                 style={{
                     height: 80,
                     width: 5,
-                    backgroundColor: "green",
+                    backgroundColor: Colors.green,
                     borderRadius: 5,
                 }}
             />

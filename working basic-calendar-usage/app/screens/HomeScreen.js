@@ -117,7 +117,7 @@ function HomeScreen(props) {
                             current={currentDay}
                             // minDate={moment().format()}
                             horizontal
-                            pastScrollRange={0}
+                            // pastScrollRange={0}
                             pagingEnabled
                             calendarWidth={350}
                             onDayPress={day => handleEvents(day)}
@@ -138,12 +138,11 @@ function HomeScreen(props) {
                 </Modal>
             </View>
 
-            {/* event containers */}
-
+            {/* events ScrollView */}
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 {
                     allDefaultEvents.map((eve, index) =>
-                        <EventCard key={index} onSubmit={() => console.log(eve.id)} title={eve.title} startDate={eve.startDate} desciption={eve.notes} />
+                        <EventCard key={index} onSubmit={() => console.log(eve.id)} edit={eve.editable} title={eve.title} startDate={eve.startDate} desciption={eve.notes} />
                     )
                 }
             </ScrollView>
