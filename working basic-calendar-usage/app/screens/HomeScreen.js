@@ -8,9 +8,12 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import EventCard from "../components/cards/EventCard"
+import UpdateCard from "../components/cards/UpdateCard"
 import CreateCalendar from '../components/CreateCalendar';
 import GetCustomEvents from '../components/GetCustomEvents';
 import GetDefaultEvents from '../components/GetDefaultEvents';
+
+// config
 import Colors from '../config/Colors';
 
 function HomeScreen(props) {
@@ -31,6 +34,8 @@ function HomeScreen(props) {
     const [allDefaultOldEvents, setAllDefaultOldEvents] = useState([])
     const [allDefaultEvents, setAllDefaultEvents] = useState([])
     const [eventsAvailableDated, setEventsAvailableDated] = useState([])
+    const [updateModalVisible, setUpdateModalVisible] = useState(false)
+    const [eventToUpdate, setEventToUpdate] = useState({})
 
     useEffect(() => {
 
@@ -56,7 +61,10 @@ function HomeScreen(props) {
                 for (let i = 0; i < allDefaultEventsTemp.length; i++) {
                     let stDate = allDefaultEventsTemp[i].startDate
                     let endDate = allDefaultEventsTemp[i].endDate
+
+                    allDefaultEventsTemp[i].alarmTime = stDate;
                     stDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
+
                     allDefaultEventsTemp[i].startDate = stDate;
                     allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`;
                     allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
@@ -102,6 +110,20 @@ function HomeScreen(props) {
 
     }
 
+    {/* update card */ }
+    const handleUpdateEvent = (eve) => {
+        setEventToUpdate(eve)
+        setUpdateModalVisible(true);
+    }
+
+    const handleUpdate = () => {
+        setUpdateModalVisible(false);
+    }
+
+    const handleDelete = () => {
+        setUpdateModalVisible(false);
+    }
+
     return (
         <View onPress={() => setModalVisible(false)} style={styles.container}>
 
@@ -142,10 +164,12 @@ function HomeScreen(props) {
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 {
                     allDefaultEvents.map((eve, index) =>
-                        <EventCard key={index} onSubmit={() => console.log(eve.id)} edit={eve.editable} title={eve.title} startDate={eve.startDate} desciption={eve.notes} />
+                        <EventCard key={index} onSubmit={() => eve.editable ? handleUpdateEvent(eve) : null} edit={eve.editable} title={eve.title} startDate={eve.startDate} desciption={eve.notes} />
                     )
                 }
             </ScrollView>
+
+            <UpdateCard event={eventToUpdate} handleDelete={() => handleDelete()} handleUpdate={() => handleUpdate()} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
         </View>
     );
 }

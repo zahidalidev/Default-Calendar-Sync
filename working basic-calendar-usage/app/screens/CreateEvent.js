@@ -32,13 +32,9 @@ function CreateEvent(props) {
         const selectedDatePicked = currentDay;
         const hour = moment(date).hour();
         const minute = moment(date).minute();
-        const newModifiedDay = moment(selectedDatePicked)
-            .hour(hour)
-            .minute(minute);
+        const newModifiedDay = moment(selectedDatePicked).hour(hour).minute(minute);
 
-        console.log("newModifiedDay: ", newModifiedDay)
         setAlarmTime(newModifiedDay)
-
         setIsDateTimePickerVisible(false);
     };
 
@@ -122,7 +118,7 @@ function CreateEvent(props) {
                                 <TextInput style={{ height: 25, fontSize: 19, marginTop: 3 }}
                                     onChangeText={text => setNotesText(text)}
                                     value={notesText}
-                                    placeholder="Description of the event."
+                                    placeholder="Description of the event"
                                 />
                             </View>
 
