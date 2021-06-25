@@ -3,12 +3,16 @@ import * as Calendar from 'expo-calendar';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 async function CreateCalendar() {
-  const defaultCalendarSource =
-    Platform.OS === 'IOS'
-      ? await getDefaultCalendarSource()
-      : { isLocalAccount: true, name: 'Expo Calendar' };
+  let calenId = await AsyncStorage.getItem("calendarId")
 
-  const newCalendarID = await Calendar.createCalendarAsync({
+  if (calenId) {
+    calenId = JSON.parse(calenId);
+    return calenId;
+  }
+
+  const defaultCalendarSource = Platform.OS === 'IOS' ? await getDefaultCalendarSource() : { isLocalAccount: true, name: 'Expo Calendar' };
+
+  let newCalendarID = await Calendar.createCalendarAsync({
     title: 'Custom Event Calendar',
     color: 'blue',
     entityType: Calendar.EntityTypes.EVENT,
@@ -20,7 +24,7 @@ async function CreateCalendar() {
   });
 
   await AsyncStorage.setItem("calendarId", JSON.stringify(newCalendarID))
-  alert(`New Calendar Id: `, newCalendarID);
+  // alert(`New Calendar Id: `, newCalendarID);
   return newCalendarID;
 }
 

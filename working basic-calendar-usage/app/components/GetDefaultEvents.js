@@ -4,7 +4,6 @@ import * as Calendar from 'expo-calendar';
 
 const GetDefaultEvents = async () => {
     const { status } = await Calendar.requestCalendarPermissionsAsync();
-
     let newIds = [];
 
     if (Platform.OS === 'ios') {
@@ -31,6 +30,8 @@ const GetDefaultEvents = async () => {
 
             const allEvents = await Calendar.getEventsAsync(newIds, "2020-11-18T21:07:29.000Z", "2023-06-18T21:07:29.000Z")
             // console.log("allEvents: ", allEvents)
+            // console.log("newIds: ", newIds)
+
             return allEvents
         }
     }

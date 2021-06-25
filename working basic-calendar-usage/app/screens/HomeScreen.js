@@ -25,15 +25,16 @@ function HomeScreen(props) {
 
     const [currentDay, setCurrentDay] = useState(`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`)
     const [modalVisible, setModalVisible] = useState(false)
-    const [calendarId, setCalendarId] = useState('')
+    const [calendarId, setCalendarId] = useState(null)
     const [allCustomEvent, setAllCustomEvent] = useState([])
+    const [allDefaultOldEvents, setAllDefaultOldEvents] = useState([])
     const [allDefaultEvents, setAllDefaultEvents] = useState([])
 
     useEffect(() => {
 
         //updating events every two seconds
         let interval = setInterval(async () => {
-            await getCalendarId();
+            let calId = await getCalendarId();
             // const allCustomEventsTemp = await GetCustomEvents()
             let allDefaultEventsTemp = await GetDefaultEvents();
 
@@ -48,19 +49,20 @@ function HomeScreen(props) {
             }
 
             if (allDefaultEventsTemp != undefined) {
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < allDefaultEventsTemp.length; i++) {
                     let stDate = allDefaultEventsTemp[i].startDate
                     let endDate = allDefaultEventsTemp[i].endDate
                     allDefaultEventsTemp[i].startDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
                     allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`
 
-                    if (allDefaultEventsTemp[i].calendarId == calendarId) {
-                        allDefaultEventsTemp[i].editz = true;
-                        console.log("calendar event new: ", allDefaultEventsTemp[i])
+                    // console.log(allDefaultEventsTemp[i].calendarId, calendarId, calId)
+                    if (allDefaultEventsTemp[i].calendarId == calId) {
+                        allDefaultEventsTemp[i].editable = true;
+                        // console.log("calendar event new: ", allDefaultEventsTemp[i])
                     }
-                    // 
                 }
                 setAllDefaultEvents(allDefaultEventsTemp)
+                setAllDefaultOldEvents(allDefaultEventsTemp)
             }
 
         }, 2000);
@@ -72,16 +74,9 @@ function HomeScreen(props) {
 
     const getCalendarId = async () => {
         // if calander id is not set then get from async storage
-
-        let calenId = ''
-        if (!calendarId) {
-            calenId = await AsyncStorage.getItem("calendarId")
-            calenId = JSON.parse(calenId);
-            if (!calenId) {
-                calenId = await CreateCalendar()
-            }
-            setCalendarId(calenId)
-        }
+        let calenId = await CreateCalendar();
+        setCalendarId(calenId);
+        return calenId;
     }
 
     const handleEvents = async (day) => {
@@ -89,12 +84,11 @@ function HomeScreen(props) {
         setModalVisible(false)
         setCurrentDay(day.dateString)
 
-
+        let tempEvent = [...allDefaultOldEvents]
+        tempEvent.filter(item => item.startDate == day.dateString);
+        setAllDefaultEvents(tempEvent)
 
     }
-
-
-
 
     return (
         <View onPress={() => setModalVisible(false)} style={styles.container}>
