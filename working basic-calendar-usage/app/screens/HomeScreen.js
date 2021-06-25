@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Text, View, TouchableOpacity, Dimensions, ScrollView, TextInput, StyleSheet, Platform } from 'react-native';
+import { Modal, Text, View, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
 import Constants from 'expo-constants';
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { RFPercentage } from 'react-native-responsive-fontsize';
-import AsyncStorage from "@react-native-async-storage/async-storage"
 
+// components
 import EventCard from "../components/cards/EventCard"
 import UpdateCard from "../components/cards/UpdateCard"
 import CreateCalendar from '../components/CreateCalendar';
 import GetCustomEvents from '../components/GetCustomEvents';
 import GetDefaultEvents from '../components/GetDefaultEvents';
+import DeleteEvent from '../components/DeleteEvent';
 
 // config
 import Colors from '../config/Colors';
@@ -37,67 +38,70 @@ function HomeScreen(props) {
     const [updateModalVisible, setUpdateModalVisible] = useState(false)
     const [eventToUpdate, setEventToUpdate] = useState({})
 
-    useEffect(() => {
 
-        //updating events every two seconds
-        // let interval = setInterval(
-        async function za() {
-            let calId = await getCalendarId();
-            // const allCustomEventsTemp = await GetCustomEvents()
-            let allDefaultEventsTemp = await GetDefaultEvents();
+    const gettingAllEvents = async () => {
+        let calId = await getCalendarId();
+        // const allCustomEventsTemp = await GetCustomEvents()
+        let allDefaultEventsTemp = await GetDefaultEvents();
 
-            // if (allCustomEventsTemp !== undefined) {
-            //     setAllCustomEvent(allCustomEventsTemp)
-            //     console.log("allCustomEventsTemp: ", allCustomEventsTemp)
-            // }
+        // if (allCustomEventsTemp !== undefined) {
+        //     setAllCustomEvent(allCustomEventsTemp)
+        //     console.log("allCustomEventsTemp: ", allCustomEventsTemp)
+        // }
 
-            // to differentiate between public and other events in Android
-            if (Platform.OS === 'android') {
-                allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')
-            }
-
-            let allDates = [];
-            if (allDefaultEventsTemp != undefined) {
-                for (let i = 0; i < allDefaultEventsTemp.length; i++) {
-                    let stDate = allDefaultEventsTemp[i].startDate
-                    let endDate = allDefaultEventsTemp[i].endDate
-
-                    allDefaultEventsTemp[i].alarmTime = stDate;
-                    stDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
-
-                    allDefaultEventsTemp[i].startDate = stDate;
-                    allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`;
-                    allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
-                    // console.log("stDate: ", allDates)
-
-                    // console.log(allDefaultEventsTemp[i].calendarId, calendarId, calId)
-                    if (allDefaultEventsTemp[i].calendarId == calId) {
-                        allDefaultEventsTemp[i].editable = true;
-                        // console.log("calendar event new: ", allDefaultEventsTemp[i])
-                    }
-                }
-                // setAllDefaultEvents(allDefaultEventsTemp)
-                setAllDefaultOldEvents(allDefaultEventsTemp);
-                setEventsAvailableDated(allDates);
-                console.log(allDates)
-            }
-
+        // to differentiate between public and other events in Android
+        if (Platform.OS === 'android') {
+            allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')
         }
-        za()
-        // , 2000);
+
+        let allDates = [];
+        if (allDefaultEventsTemp != undefined) {
+            for (let i = 0; i < allDefaultEventsTemp.length; i++) {
+                let stDate = allDefaultEventsTemp[i].startDate
+                let endDate = allDefaultEventsTemp[i].endDate
+
+                allDefaultEventsTemp[i].alarmTime = stDate;
+                stDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
+
+                allDefaultEventsTemp[i].startDate = stDate;
+                allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`;
+
+                // all dates that has events
+                allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
+                // console.log("stDate: ", allDates)
+
+                // console.log(allDefaultEventsTemp[i].calendarId, calendarId, calId)
+                if (allDefaultEventsTemp[i].calendarId == calId) {
+                    allDefaultEventsTemp[i].editable = true;
+                    // console.log("calendar event new: ", allDefaultEventsTemp[i])
+                }
+            }
+            // setAllDefaultEvents(allDefaultEventsTemp)
+            setAllDefaultOldEvents(allDefaultEventsTemp);
+            setEventsAvailableDated(allDates);
+        }
+    }
+
+    useEffect(() => {
+        //updating events every two seconds
+        let interval = setInterval(
+            async () => {
+                await gettingAllEvents()
+            }, 4000);
 
         return (() => {
-            // clearInterval(interval)
+            clearInterval(interval)
         })
     }, []);
 
+    // if calander id is not set then get from async storage
     const getCalendarId = async () => {
-        // if calander id is not set then get from async storage
         let calenId = await CreateCalendar();
         setCalendarId(calenId);
         return calenId;
     }
 
+    // Filtering events by dates
     const handleEvents = async (day) => {
         setSelectedDay({ [day.dateString]: { selected: true, selectedColor: '#2E66E7' } })
         setModalVisible(false)
@@ -105,23 +109,31 @@ function HomeScreen(props) {
 
         let tempEvent = [...allDefaultOldEvents]
         tempEvent = tempEvent.filter(item => item.startDate == day.dateString);
-        console.log(tempEvent)
         setAllDefaultEvents(tempEvent)
-
     }
 
-    {/* update card */ }
+    // update card
     const handleUpdateEvent = (eve) => {
         setEventToUpdate(eve)
         setUpdateModalVisible(true);
     }
 
+    // update event
     const handleUpdate = () => {
         setUpdateModalVisible(false);
     }
 
-    const handleDelete = () => {
+    // delete event
+    const handleDelete = async (id) => {
         setUpdateModalVisible(false);
+
+        try {
+            await DeleteEvent(id)
+            await gettingAllEvents()   //updating event after deleting
+            alert("Event Deleted")
+        } catch (error) {
+            alert("Event Deletion Error!")
+        }
     }
 
     return (
@@ -169,7 +181,7 @@ function HomeScreen(props) {
                 }
             </ScrollView>
 
-            <UpdateCard event={eventToUpdate} handleDelete={() => handleDelete()} handleUpdate={() => handleUpdate()} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
+            <UpdateCard event={eventToUpdate} handleDelete={(id) => handleDelete(id)} handleUpdate={() => handleUpdate()} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
         </View>
     );
 }

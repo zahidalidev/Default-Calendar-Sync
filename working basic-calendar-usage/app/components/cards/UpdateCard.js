@@ -71,10 +71,7 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
                             <Text style={{ color: '#9CAAC4', fontSize: 16, fontWeight: '600', }}>
                                 Times
                             </Text>
-                            <TouchableOpacity
-                                onPress={() => setIsDateTimePickerVisible(true)}
-                                style={{ height: 25, marginTop: 3 }}
-                            >
+                            <TouchableOpacity onPress={() => setIsDateTimePickerVisible(true)} style={{ height: 25, marginTop: 3 }}>
                                 <Text style={{ fontSize: 19 }}>
                                     {moment(alarmTime).format('h:mm A')}
                                 </Text>
@@ -88,7 +85,7 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
                                     UPDATE
                                 </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleDelete()}>
+                            <TouchableOpacity onPress={() => handleDelete(event.id)}>
                                 <Text style={{ fontSize: 18, textAlign: 'center', color: 'tomato', }}>
                                     DELETE
                                 </Text>
