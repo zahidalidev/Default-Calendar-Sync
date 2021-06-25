@@ -56,7 +56,7 @@ function HomeScreen(props) {
 
                     if (allDefaultEventsTemp[i].calendarId == calendarId) {
                         allDefaultEventsTemp[i].editz = true;
-                        console.log("calendarId new: ", allDefaultEventsTemp[i])
+                        console.log("calendar event new: ", allDefaultEventsTemp[i])
                     }
                     // 
                 }
