@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, LogBox, ScrollView, RefreshControl } fr
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import CreateEventTask from "./app/screens/CreateEvent"
+import HomeScreen from "./app/screens/HomeScreen"
 
 import CreateEvent from './app/components/CreateEvent';
 import GetCustomEvents from './app/components/GetCustomEvents';
@@ -129,7 +130,9 @@ export default function App() {
 
     //   </ScrollView>
     // </View>
-    <CreateEventTask />
+
+    // <CreateEventTask />
+    <HomeScreen />
   );
 }
 
