@@ -11,6 +11,7 @@ import EventCard from "../components/cards/EventCard"
 import CreateCalendar from '../components/CreateCalendar';
 import GetCustomEvents from '../components/GetCustomEvents';
 import GetDefaultEvents from '../components/GetDefaultEvents';
+import Colors from '../config/Colors';
 
 function HomeScreen(props) {
 
@@ -29,11 +30,13 @@ function HomeScreen(props) {
     const [allCustomEvent, setAllCustomEvent] = useState([])
     const [allDefaultOldEvents, setAllDefaultOldEvents] = useState([])
     const [allDefaultEvents, setAllDefaultEvents] = useState([])
+    const [eventsAvailableDated, setEventsAvailableDated] = useState([])
 
     useEffect(() => {
 
         //updating events every two seconds
-        let interval = setInterval(async () => {
+        // let interval = setInterval(
+        async function za() {
             let calId = await getCalendarId();
             // const allCustomEventsTemp = await GetCustomEvents()
             let allDefaultEventsTemp = await GetDefaultEvents();
@@ -48,12 +51,16 @@ function HomeScreen(props) {
                 allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')
             }
 
+            let allDates = [];
             if (allDefaultEventsTemp != undefined) {
                 for (let i = 0; i < allDefaultEventsTemp.length; i++) {
                     let stDate = allDefaultEventsTemp[i].startDate
                     let endDate = allDefaultEventsTemp[i].endDate
-                    allDefaultEventsTemp[i].startDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
-                    allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`
+                    stDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
+                    allDefaultEventsTemp[i].startDate = stDate;
+                    allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`;
+                    allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
+                    // console.log("stDate: ", allDates)
 
                     // console.log(allDefaultEventsTemp[i].calendarId, calendarId, calId)
                     if (allDefaultEventsTemp[i].calendarId == calId) {
@@ -61,14 +68,18 @@ function HomeScreen(props) {
                         // console.log("calendar event new: ", allDefaultEventsTemp[i])
                     }
                 }
-                setAllDefaultEvents(allDefaultEventsTemp)
-                setAllDefaultOldEvents(allDefaultEventsTemp)
+                // setAllDefaultEvents(allDefaultEventsTemp)
+                setAllDefaultOldEvents(allDefaultEventsTemp);
+                setEventsAvailableDated(allDates);
+                console.log(allDates)
             }
 
-        }, 2000);
+        }
+        za()
+        // , 2000);
 
         return (() => {
-            clearInterval(interval)
+            // clearInterval(interval)
         })
     }, []);
 
@@ -85,7 +96,8 @@ function HomeScreen(props) {
         setCurrentDay(day.dateString)
 
         let tempEvent = [...allDefaultOldEvents]
-        tempEvent.filter(item => item.startDate == day.dateString);
+        tempEvent = tempEvent.filter(item => item.startDate == day.dateString);
+        console.log(tempEvent)
         setAllDefaultEvents(tempEvent)
 
     }
@@ -97,13 +109,13 @@ function HomeScreen(props) {
             <View style={{ marginTop: RFPercentage(5), width: "100%", justifyContent: "center", alignItems: "center" }} >
                 <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7} style={{ justifyContent: "space-between", flexDirection: "row", borderRadius: 5, width: "84%", borderColor: "grey", borderWidth: 0.5 }} >
                     <Text style={{ margin: RFPercentage(1.2), color: "grey", fontSize: RFPercentage(2.2) }} >{currentDay}</Text>
-                    <MaterialCommunityIcons style={{ margin: RFPercentage(0.5) }} name="calendar-month" color="#5caead" size={RFPercentage(3.7)} />
+                    <MaterialCommunityIcons style={{ margin: RFPercentage(0.5) }} name="calendar-month" color={Colors.green} size={RFPercentage(3.7)} />
                 </TouchableOpacity>
                 <Modal transparent={true} visible={modalVisible} animationType="fade" style={{ borderRadius: 20, elevation: 20 }}>
                     <View style={styles.calenderContainer}>
                         <CalendarList style={{ marginTop: RFPercentage(10), borderRadius: 20, backgroundColor: "white", elevation: 10, width: 350, height: 350 }}
                             current={currentDay}
-                            minDate={moment().format()}
+                            // minDate={moment().format()}
                             horizontal
                             pastScrollRange={0}
                             pagingEnabled
@@ -120,15 +132,7 @@ function HomeScreen(props) {
                                 calendarBackground: 'white',
                                 textDisabledColor: '#d9dbe0',
                             }}
-                            markedDates={{
-                                ['2021-06-25']: {
-                                    selected: true,
-                                    selectedColor: '#2E66E7',
-                                }, ['2021-06-26']: {
-                                    selected: true,
-                                    selectedColor: '#2E66E7',
-                                }
-                            }}
+                            markedDates={eventsAvailableDated}
                         />
                     </View>
                 </Modal>
@@ -136,12 +140,12 @@ function HomeScreen(props) {
 
             {/* event containers */}
 
-            <ScrollView
-                contentContainerStyle={{
-                    paddingBottom: 20,
-                }}
-            >
-                <EventCard />
+            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                {
+                    allDefaultEvents.map((eve, index) =>
+                        <EventCard key={index} onSubmit={() => console.log(eve.id)} title={eve.title} startDate={eve.startDate} desciption={eve.notes} />
+                    )
+                }
             </ScrollView>
         </View>
     );
