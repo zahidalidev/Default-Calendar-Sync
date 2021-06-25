@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Text, View, TouchableOpacity, Dimensions, ScrollView, TextInput, StyleSheet } from 'react-native';
+import { Modal, Text, View, TouchableOpacity, Dimensions, ScrollView, TextInput, StyleSheet, Platform } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
 import Constants from 'expo-constants';
@@ -30,10 +30,10 @@ function HomeScreen(props) {
     const [allDefaultEvents, setAllDefaultEvents] = useState([])
 
     useEffect(() => {
-        getCalendarId()
 
         //updating events every two seconds
         let interval = setInterval(async () => {
+            await getCalendarId();
             // const allCustomEventsTemp = await GetCustomEvents()
             let allDefaultEventsTemp = await GetDefaultEvents();
 
@@ -42,17 +42,28 @@ function HomeScreen(props) {
             //     console.log("allCustomEventsTemp: ", allCustomEventsTemp)
             // }
 
+            // to differentiate between public and other events in Android
+            if (Platform.OS === 'android') {
+                allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')
+            }
+
             if (allDefaultEventsTemp != undefined) {
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 20; i++) {
                     let stDate = allDefaultEventsTemp[i].startDate
                     let endDate = allDefaultEventsTemp[i].endDate
                     allDefaultEventsTemp[i].startDate = `${moment(stDate).format('YYYY')}-${moment(stDate).format('MM')}-${moment(stDate).format('DD')}`
                     allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`
+
+                    if (allDefaultEventsTemp[i].calendarId == calendarId) {
+                        allDefaultEventsTemp[i].editz = true;
+                        console.log("calendarId new: ", allDefaultEventsTemp[i])
+                    }
+                    // 
                 }
                 setAllDefaultEvents(allDefaultEventsTemp)
             }
 
-        }, 5000);
+        }, 2000);
 
         return (() => {
             clearInterval(interval)
@@ -62,8 +73,9 @@ function HomeScreen(props) {
     const getCalendarId = async () => {
         // if calander id is not set then get from async storage
 
+        let calenId = ''
         if (!calendarId) {
-            let calenId = await AsyncStorage.getItem("calendarId")
+            calenId = await AsyncStorage.getItem("calendarId")
             calenId = JSON.parse(calenId);
             if (!calenId) {
                 calenId = await CreateCalendar()
