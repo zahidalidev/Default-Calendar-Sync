@@ -14,7 +14,6 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
     const [taskText, setTaskText] = useState('')
     const [notesText, setNotesText] = useState('')
 
-    console.log(event)
     useEffect(() => {
         setAlarmTime(moment(event.alarmTime).format());
         setTaskText(event.title)
