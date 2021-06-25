@@ -20,9 +20,7 @@ function HomeScreen(props) {
         },
     })
 
-    const [taskText, setTaskText] = useState('')
-    const [notesText, setNotesText] = useState('')
-    const [currentDay, setCurrentDay] = useState(moment().format())
+    const [currentDay, setCurrentDay] = useState(`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`)
     const [modalVisible, setModalVisible] = useState(false)
 
 
