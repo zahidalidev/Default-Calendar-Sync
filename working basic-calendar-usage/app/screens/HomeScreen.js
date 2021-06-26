@@ -35,7 +35,9 @@ function HomeScreen(props) {
 
         // to differentiate between public and other events in Android
         if (Platform.OS === 'android') {
-            allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')
+            allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.accessLevel !== 'public')  // (android) filter public holidays base on accessLevel
+        } else {
+            allDefaultEventsTemp = allDefaultEventsTemp.filter(event => event.creationDate)     // (ios) filter public holidays base on creationDate
         }
 
         let allDates = [];
