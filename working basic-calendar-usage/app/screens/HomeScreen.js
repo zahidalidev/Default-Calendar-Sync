@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Text, View, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
-import { CalendarList } from 'react-native-calendars';
 import moment from 'moment';
 import Constants from 'expo-constants';
-import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { CalendarList } from 'react-native-calendars';
+import { MaterialCommunityIcons, Icon } from "@expo/vector-icons"
 import { RFPercentage } from 'react-native-responsive-fontsize';
 
 // components
@@ -192,7 +192,13 @@ function HomeScreen(props) {
                 }
             </ScrollView>
 
+            {/* Update Card Modal */}
             <UpdateCard event={eventToUpdate} handleDelete={(id) => handleDelete(id)} handleUpdate={(eventBody) => handleUpdate(eventBody)} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
+
+            {/* reate event button */}
+            <TouchableOpacity style={[styles.circleButton, styles.shadowEffect]} onPress={() => console.log("create task")}>
+                <MaterialCommunityIcons name="plus" size={RFPercentage(4.5)} color={Colors.green} />
+            </TouchableOpacity>
         </View>
     );
 }
@@ -213,7 +219,26 @@ const styles = StyleSheet.create({
         height: 350,
         alignSelf: 'center',
     },
-
+    circleButton: {
+        position: "absolute",
+        bottom: RFPercentage(4),
+        right: RFPercentage(4),
+        borderWidth: 1,
+        borderColor: Colors.green,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: RFPercentage(9),
+        height: RFPercentage(9),
+        backgroundColor: '#fff',
+        borderRadius: RFPercentage(5.5),
+    },
+    shadowEffect: {
+        shadowColor: 'rgba(0 ,0 ,0 , .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+        elevation: 5, // Android
+    }
 });
 
 export default HomeScreen;
