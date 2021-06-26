@@ -10,7 +10,7 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const { width: vw } = Dimensions.get('window');
 
-function CreateEvent(props) {
+function CreateEventScreen(props) {
 
     const [selectedDay, setSelectedDay] = useState({
         [`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format(
@@ -61,7 +61,7 @@ function CreateEvent(props) {
                     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                         <View style={styles.backButton}>
                             <TouchableOpacity
-                                onPress={() => alert("Home screen is not prepared yet")}
+                                onPress={() => props.navigation.navigate('HomeScreen')}
                                 style={{ marginRight: vw / 2 - 120, marginLeft: 20 }}
                             >
                                 <MaterialCommunityIcons name="chevron-left" size={30} />
@@ -128,8 +128,8 @@ function CreateEvent(props) {
                             <View>
                                 <Text style={styles.notes}>People</Text>
                                 <TextInput style={{ height: 25, fontSize: 19, marginTop: 3, }}
-                                    onChangeText={text => setNotesText(text)}
-                                    value={notesText}
+                                    // onChangeText={text => setNotesText(text)}
+                                    // value={notesText}
                                     placeholder="Add People"
                                 />
                             </View>
@@ -140,8 +140,8 @@ function CreateEvent(props) {
                             <View>
                                 <Text style={styles.notes}>Location</Text>
                                 <TextInput style={{ height: 25, fontSize: 19, marginTop: 3 }}
-                                    onChangeText={text => setNotesText(text)}
-                                    value={notesText}
+                                    // onChangeText={text => setNotesText(text)}
+                                    // value={notesText}
                                     placeholder="Add Location"
                                 />
                             </View>
@@ -281,4 +281,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CreateEvent;
+export default CreateEventScreen;

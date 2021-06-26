@@ -72,7 +72,7 @@ function HomeScreen(props) {
         let interval = setInterval(
             async () => {
                 await gettingAllEvents()
-            }, 100000);
+            }, 4000);
 
         return (() => {
             clearInterval(interval)
@@ -196,7 +196,7 @@ function HomeScreen(props) {
             <UpdateCard event={eventToUpdate} handleDelete={(id) => handleDelete(id)} handleUpdate={(eventBody) => handleUpdate(eventBody)} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
 
             {/* reate event button */}
-            <TouchableOpacity style={[styles.circleButton, styles.shadowEffect]} onPress={() => console.log("create task")}>
+            <TouchableOpacity style={[styles.circleButton, styles.shadowEffect]} onPress={() => props.navigation.navigate('CreateEventScreen')}>
                 <MaterialCommunityIcons name="plus" size={RFPercentage(4.5)} color={Colors.green} />
             </TouchableOpacity>
         </View>
