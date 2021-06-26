@@ -1,18 +1,31 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import moment from 'moment';
 import * as Calendar from 'expo-calendar';
+import * as Localization from 'expo-localization';
 
-async function UpdateEvent(eventId, title, notes) {
+async function UpdateEvent(eventBody) {
+  const { eventId, title, notes, alarmTime } = eventBody;
+
   // const defaultCalendarSource =
   //   Platform.OS === 'IOS'
   //     ? await getDefaultCalendarSource()
   //     : { isLocalAccount: true, name: 'Expo Calendar' };
+  const event = {
+    title,
+    notes,
+    startDate: moment(alarmTime)
+      .add(1, 'm')
+      .toDate(),
+    endDate: moment(alarmTime)
+      .add(5, 'm')
+      .toDate(),
+    timeZone: Localization.timezone,
+  };
 
   await Calendar.updateEventAsync(
     eventId,
-    {
-      title,
-      notes,
-    });
+    event
+  );
 
   // Updating Event in async storage
   let allEvents = await AsyncStorage.getItem('Events')
@@ -29,8 +42,6 @@ async function UpdateEvent(eventId, title, notes) {
     await AsyncStorage.removeItem('Events')
     await AsyncStorage.setItem('Events', JSON.stringify(allEvents))
   }
-
-  alert(`The event is updated`);
 }
 
 export default UpdateEvent

@@ -8,17 +8,18 @@ import moment from 'moment';
 import Colors from '../../config/Colors';
 
 function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, handleCancel }) {
-    const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false)
 
+    const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false)
+    const [currentDay, setCurrentDay] = useState(moment().format())
     const [alarmTime, setAlarmTime] = useState(moment().format())
     const [taskText, setTaskText] = useState('')
     const [notesText, setNotesText] = useState('')
 
     useEffect(() => {
         setAlarmTime(moment(event.alarmTime).format());
+        setCurrentDay(moment(event.alarmTime).format());
         setTaskText(event.title)
         setNotesText(event.notes)
-
     }, [event])
 
     const handleDatePicked = date => {
@@ -39,14 +40,16 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
             visible={modalVisible}
             onRequestClose={() => null}
         >
+            <DateTimePicker
+                style={{ zIndex: 200 }}
+                isVisible={isDateTimePickerVisible}
+                onConfirm={(date) => handleDatePicked(date)}
+                onCancel={() => setIsDateTimePickerVisible(false)}
+                mode="time"
+            />
+
             <View style={styles.containerTask}>
                 <View style={styles.cardMain}>
-                    <DateTimePicker
-                        isVisible={isDateTimePickerVisible}
-                        onConfirm={(date) => handleDatePicked(date)}
-                        onCancel={() => setIsDateTimePickerVisible(false)}
-                        mode="time"
-                    />
                     <View style={styles.taskContainer}>
                         <TextInput
                             style={styles.title}
@@ -80,7 +83,12 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
                         <View style={styles.sepeerator} />
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', }}>
-                            <TouchableOpacity onPress={() => handleUpdate()}>
+                            <TouchableOpacity onPress={() => handleUpdate({
+                                eventId: event.id,
+                                title: taskText,
+                                notes: notesText,
+                                alarmTime: alarmTime
+                            })}>
                                 <Text style={{ fontSize: 18, textAlign: 'center', color: Colors.green, }}>
                                     UPDATE
                                 </Text>
@@ -101,7 +109,6 @@ function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, h
                 </View>
             </View>
         </Modal>
-
     );
 }
 

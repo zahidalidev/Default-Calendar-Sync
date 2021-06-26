@@ -10,44 +10,28 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import EventCard from "../components/cards/EventCard"
 import UpdateCard from "../components/cards/UpdateCard"
 import CreateCalendar from '../components/CreateCalendar';
-import GetCustomEvents from '../components/GetCustomEvents';
 import GetDefaultEvents from '../components/GetDefaultEvents';
 import DeleteEvent from '../components/DeleteEvent';
 
 // config
 import Colors from '../config/Colors';
+import UpdateEvent from '../components/UpdateEvent';
 
 function HomeScreen(props) {
-
-    const [selectedDay, setSelectedDay] = useState({
-        [`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format(
-            'DD'
-        )}`]: {
-            selected: true,
-            selectedColor: '#2E66E7',
-        },
-    })
-
     const [currentDay, setCurrentDay] = useState(`${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`)
     const [modalVisible, setModalVisible] = useState(false)
     const [calendarId, setCalendarId] = useState(null)
-    const [allCustomEvent, setAllCustomEvent] = useState([])
     const [allDefaultOldEvents, setAllDefaultOldEvents] = useState([])
     const [allDefaultEvents, setAllDefaultEvents] = useState([])
-    const [eventsAvailableDated, setEventsAvailableDated] = useState([])
+    const [eventsAvailableDated, setEventsAvailableDated] = useState({ [currentDay]: { selected: true, selectedColor: '#486ae2' } })
     const [updateModalVisible, setUpdateModalVisible] = useState(false)
     const [eventToUpdate, setEventToUpdate] = useState({})
 
 
     const gettingAllEvents = async () => {
-        let calId = await getCalendarId();
-        // const allCustomEventsTemp = await GetCustomEvents()
-        let allDefaultEventsTemp = await GetDefaultEvents();
 
-        // if (allCustomEventsTemp !== undefined) {
-        //     setAllCustomEvent(allCustomEventsTemp)
-        //     console.log("allCustomEventsTemp: ", allCustomEventsTemp)
-        // }
+        let calId = await getCalendarId();
+        let allDefaultEventsTemp = await GetDefaultEvents();
 
         // to differentiate between public and other events in Android
         if (Platform.OS === 'android') {
@@ -67,16 +51,14 @@ function HomeScreen(props) {
                 allDefaultEventsTemp[i].endDate = `${moment(endDate).format('YYYY')}-${moment(endDate).format('MM')}-${moment(endDate).format('DD')}`;
 
                 // all dates that has events
-                allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
-                // console.log("stDate: ", allDates)
 
-                // console.log(allDefaultEventsTemp[i].calendarId, calendarId, calId)
                 if (allDefaultEventsTemp[i].calendarId == calId) {
+                    allDates = { ...allDates, [stDate]: { selected: true, selectedColor: Colors.green } };
                     allDefaultEventsTemp[i].editable = true;
-                    // console.log("calendar event new: ", allDefaultEventsTemp[i])
+                } else {
+                    allDates = { ...allDates, [stDate]: { selected: true, selectedColor: "#ef6464" } };
                 }
             }
-            // setAllDefaultEvents(allDefaultEventsTemp)
             setAllDefaultOldEvents(allDefaultEventsTemp);
             setEventsAvailableDated(allDates);
         }
@@ -84,10 +66,11 @@ function HomeScreen(props) {
 
     useEffect(() => {
         //updating events every two seconds
+        gettingAllEvents();
         let interval = setInterval(
             async () => {
                 await gettingAllEvents()
-            }, 4000);
+            }, 100000);
 
         return (() => {
             clearInterval(interval)
@@ -103,7 +86,6 @@ function HomeScreen(props) {
 
     // Filtering events by dates
     const handleEvents = async (day) => {
-        setSelectedDay({ [day.dateString]: { selected: true, selectedColor: '#2E66E7' } })
         setModalVisible(false)
         setCurrentDay(day.dateString)
 
@@ -119,8 +101,18 @@ function HomeScreen(props) {
     }
 
     // update event
-    const handleUpdate = () => {
+    const handleUpdate = async (eventBody) => {
         setUpdateModalVisible(false);
+
+        try {
+            await UpdateEvent(eventBody)
+            await gettingAllEvents()       //Updating event after updating
+            let d = await refereshCurrentDate()
+            await handleEventsUpdate(d)    //Filtiring event after updating
+            alert("Event Updated")
+        } catch (error) {
+            alert("Event Updation Error!")
+        }
     }
 
     // delete event
@@ -129,11 +121,28 @@ function HomeScreen(props) {
 
         try {
             await DeleteEvent(id)
-            await gettingAllEvents()   //updating event after deleting
+            await gettingAllEvents()   //Updating event after deleting
+            let d = await refereshCurrentDate()
+            await handleEventsUpdate(d)    //Filtiring event after deleting
             alert("Event Deleted")
         } catch (error) {
             alert("Event Deletion Error!")
         }
+    }
+
+    const refereshCurrentDate = async () => {
+        const selectedDate = `${moment().format('YYYY')}-${moment().format('MM')}-${moment().format('DD')}`;
+        setCurrentDay(selectedDate)
+        return selectedDate;
+    }
+
+    const handleEventsUpdate = async (day) => {
+        setModalVisible(false)
+        setCurrentDay(day)
+
+        let tempEvent = [...allDefaultOldEvents]
+        tempEvent = tempEvent.filter(item => item.startDate == day);
+        setAllDefaultEvents(tempEvent)
     }
 
     return (
@@ -181,7 +190,7 @@ function HomeScreen(props) {
                 }
             </ScrollView>
 
-            <UpdateCard event={eventToUpdate} handleDelete={(id) => handleDelete(id)} handleUpdate={() => handleUpdate()} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
+            <UpdateCard event={eventToUpdate} handleDelete={(id) => handleDelete(id)} handleUpdate={(eventBody) => handleUpdate(eventBody)} handleCancel={() => setUpdateModalVisible(false)} modalVisible={updateModalVisible} />
         </View>
     );
 }

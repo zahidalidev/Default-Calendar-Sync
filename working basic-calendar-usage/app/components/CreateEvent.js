@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import moment from 'moment';
 import * as Calendar from 'expo-calendar';
 import * as Localization from 'expo-localization';
-import moment from 'moment';
 
 import CreateCalendar from "./CreateCalendar"
 
