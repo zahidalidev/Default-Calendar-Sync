@@ -14,7 +14,7 @@ import GetDefaultEvents from '../components/GetDefaultEvents';
 import DeleteEvent from '../components/DeleteEvent';
 
 // config
-import Colors from '../config/Colors';
+import Colors from '../config/colors';
 import UpdateEvent from '../components/UpdateEvent';
 
 function HomeScreen(props) {

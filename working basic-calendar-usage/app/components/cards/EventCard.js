@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
 
 // config
-import Colors from '../../config/Colors';
+import Colors from '../../config/colors';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 
 function EventCard({ title, startDate, desciption, onSubmit, edit }) {

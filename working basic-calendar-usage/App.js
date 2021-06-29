@@ -4,6 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // screens
+import LoginScreen from './app/screens/LoginScreen';
+import RegisterScreen from './app/screens/RegisterScreen';
 import HomeScreen from './app/screens/HomeScreen';
 import CreateEventScreen from './app/screens/CreateEventScreen';
 
@@ -34,7 +36,9 @@ export default function App() {
           open: config,
           close: config,
         },
-      }} initialRouteName="HomeScreen" >
+      }} initialRouteName="LoginScreen" >
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="CreateEventScreen" component={CreateEventScreen} />
       </Stack.Navigator>

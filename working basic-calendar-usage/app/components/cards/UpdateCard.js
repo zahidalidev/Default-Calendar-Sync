@@ -5,7 +5,7 @@ import { RFPercentage } from 'react-native-responsive-fontsize';
 import moment from 'moment';
 
 // config
-import Colors from '../../config/Colors';
+import Colors from '../../config/colors';
 
 function UpdateCard({ event, modalVisible = false, handleUpdate, handleDelete, handleCancel }) {
 
