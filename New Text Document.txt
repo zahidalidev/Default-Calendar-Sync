@@ -1,0 +1,20 @@
+1- User can signup/login
+2- user will create events by providing details that are in evetns table including URL.
+3- When user create event he can add friends, when user add friends they will be stored
+in the form of json ojbect array which will has the properties eg. {userID, accept/decline} these are for
+to track which friends are invited and are they accept or decline the events.
+4- every event will have the property "createBy" which represent the owner of the event
+5- When user is creating events and selecting users for inviting them, then he can check whether they are busy or not
+because of events table we can check this by getting all events members and events timings,
+for example if I'm creating event and I have select user2 to invite him then we will get all evetns and we will
+search for events which has user2 and for example if user2 is in two evetns then we will get day/timing of that two events
+and we will compare there timing with the timing of new evetns. this is how we can check whether the users are busy or available.
+6- If users are avaliable we will create event and add the infor about event and its member in the events table and we willl sent the invitiations to
+all users invited by the creator/owner of the event.
+7- The users who are invited by the owner of the event, can accept or decline the event if they decline then the propert of invitaion accept/decilne will be updated,
+If they accept then the event will be created in their calendar.
+
+
+when you add me, and select date and time, and do a search
+In this case, it will take the date and time for 3 months from my events list and check if I am free or not
+And this way you can see if I am free or not
